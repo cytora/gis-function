@@ -44,11 +44,6 @@ jobs:
 #            cp dist.zip ${SERVICE}-src-0.0.${CIRCLE_BUILD_NUM}.zip
 #            gsutil cp ${SERVICE}-src-0.0.${CIRCLE_BUILD_NUM}.zip gs://cytora-service-versions/${SERVICE}/
 
-      - save_cache:
-          key: go-modules-v1-{{ checksum "go.sum" }}
-          paths:
-            - /root/go/pkg/mod
-
       - persist_to_workspace:
           root: workspace
           paths:
