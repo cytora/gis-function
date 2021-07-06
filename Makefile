@@ -12,6 +12,7 @@ build-lambda:
 	cd app
 	zip -r ../dist.zip .
 	echo 'Build Lambda zip for python with dependencies complete.'
+	ls -la
 
 acceptance-tests:
 	pytest
