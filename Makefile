@@ -12,7 +12,7 @@ build-lambda:
 	pwd
 	echo 'Build Lambda zip for python with dependencies starting ...'
 	cd app/
-	zip -r ../dist.zip .
+	# zip -r ../dist.zip .
 	echo 'Build Lambda zip for python with dependencies complete.'
 	ls -la
 	pwd
