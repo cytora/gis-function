@@ -6,7 +6,7 @@ from mangum import Mangum
 from api import app
 
 
-def handler(event, context):
+def lambda_handler(event, context):
     debug = os.getenv('DEBUG', '')
     if debug.lower() == 'true':
         evt = json.dumps(event)
