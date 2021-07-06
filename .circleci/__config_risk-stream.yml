@@ -65,21 +65,6 @@ jobs:
           paths:
             - build_num
 
-# FIXME: this depends on the environment
-#      - run:
-#          name: firebase-auth
-#          command: cp -v ./static/firestore-auth_dev.js ./static/firestore-auth.js
-
-#      - aws-assume/assume-role:
-#          role-name: "CytoraCircleciAccess"
-#          account-id: "897727315233"
-
-#      - aws-s3/copy:
-#          from: ./static
-#          to: "s3://cytora-dev-${AWS_REGION}-${SERVICE}-site"
-#          aws-region: AWS_REGION
-#          arguments: --recursive
-
   build-infra:
     docker:
       - image: eu.gcr.io/core-platform-1/terraform-runtime:latest
@@ -90,7 +75,6 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp/build_num
-
       - checkout
 
       - aws-assume/assume-role:
