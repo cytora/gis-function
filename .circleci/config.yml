@@ -36,9 +36,10 @@ jobs:
       - run:
           name: build function
           command: |
-            make
+            make lint
             echo "pwd: $(pwd)"
             mkdir -v workspace
+            zip app dist.zip
             cp dist.zip workspace/dist.zip
             echo "${CIRCLE_BUILD_NUM}" > workspace/version
 #            cp dist.zip ${SERVICE}-src-0.0.${CIRCLE_BUILD_NUM}.zip
