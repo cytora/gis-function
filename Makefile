@@ -7,5 +7,8 @@ lint:
 	echo '============================================================' >> flake8-results.txt
 	flake8 test >> flake8-results.txt test  || true
 
+build-lambda:
+    echo 'Build Lambda zip for python'
+
 acceptance-tests:
 	pytest
