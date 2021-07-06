@@ -8,8 +8,10 @@ lint:
 	flake8 test >> flake8-results.txt test  || true
 
 build-lambda:
-	ls
-	echo 'Build Lambda zip for python'
+	echo 'Build Lambda zip for python with dependencies starting ...'
+	cd app
+	zip -r ../dist.zip .
+	echo 'Build Lambda zip for python with dependencies complete.'
 
 acceptance-tests:
 	pytest
