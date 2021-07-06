@@ -136,7 +136,7 @@ jobs:
           backend_config: bucket="cytora-dev-terraform-eu-west-1",dynamodb_table="cytora-dev-terraform-state-lock"
           path: terraform-service-templates/services/${SERVICE}/function-http
           var_file: terraform.tfvars,common.tfvars
-          var: service=${SERVICE},region=${AWS_REGION},version_number=${VERSION_NUMBER},environment="cytora-dev"
+          var: service=${SERVICE},region=${AWS_REGION},version_number=${VERSION_NUMBER},environment="cytora-dev",runtime="python3.8"
           workspace: ${SERVICE}-function-http
 
       - terraform/apply:
@@ -144,7 +144,7 @@ jobs:
           backend_config: bucket="cytora-dev-terraform-eu-west-1",dynamodb_table="cytora-dev-terraform-state-lock"
           path: terraform-service-templates/services/${SERVICE}/function-http
           var_file: terraform.tfvars,common.tfvars
-          var: service=${SERVICE},region=${AWS_REGION},version_number=${VERSION_NUMBER},environment="cytora-dev"
+          var: service=${SERVICE},region=${AWS_REGION},version_number=${VERSION_NUMBER},environment="cytora-dev",runtime="python3.8"
           workspace: ${SERVICE}-function-http
 
   build-infra-prod:
