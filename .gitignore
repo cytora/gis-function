@@ -1,3 +1,5 @@
+
+flake8*.txt
 excl/
 
 # Byte-compiled / optimized / DLL files

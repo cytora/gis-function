@@ -65,12 +65,12 @@ ENV COMMON_OPTIONS \
         -DPOPPLER_DATADIR=/opt/bin/ \
         -DTESTDATADIR=/build/test
 
-RUN cd /build/linux_x64 \
-	&& cmake /build/poppler \
-			-DCMAKE_CXX_FLAGS="-std=c++11 -Os" \
-			-DCMAKE_EXE_LINKER_FLAGS="-pthread" \
-			${COMMON_OPTIONS} \
-    && make
+#RUN cd /build/linux_x64 \
+#	&& cmake /build/poppler \
+#			-DCMAKE_CXX_FLAGS="-std=c++11 -Os" \
+#			-DCMAKE_EXE_LINKER_FLAGS="-pthread" \
+#			${COMMON_OPTIONS} \
+#    && make
 
 #RUN mkdir /build/pdftools \
 #	&& cd /build/pdftools \
