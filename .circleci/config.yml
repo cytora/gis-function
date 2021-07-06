@@ -6,16 +6,22 @@ orbs:
   terraform: circleci/terraform@2.0.2
 
 executors:
-  go-protobuf-builder:
+  python-builder:
     docker:
-      - image: eu.gcr.io/${GCP_PROJECT}/go-protobuf-builder:latest
+      - image: eu.gcr.io/${GCP_PROJECT}/python-builder-lambda:latest
+        auth:
+          username: _json_key
+          password: ${GCLOUD_SERVICE_KEY}
+  aws-cli:
+    docker:
+      - image: eu.gcr.io/core-platform-1/awscli:latest
         auth:
           username: _json_key
           password: ${GCLOUD_SERVICE_KEY}
 
 jobs:
   build-function:
-    executor: go-protobuf-builder
+    executor: python-builder
     steps:
       - checkout
 
