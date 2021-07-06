@@ -3,17 +3,10 @@ version: 2.1
 orbs:
   aws-assume: airswap/assume-role@0.2.0
   aws-s3: circleci/aws-s3@1.0.13
-  # aws-ecr: circleci/aws-ecr@6.5.0
   terraform: circleci/terraform@2.0.2
 
 executors:
-  python-builder:
-    docker:
-      - image: eu.gcr.io/${GCP_PROJECT}/python-builder-lambda:latest
-        auth:
-          username: _json_key
-          password: ${GCLOUD_SERVICE_KEY}
-  aws-cli:
+  go-protobuf-builder:
     docker:
       - image: eu.gcr.io/${GCP_PROJECT}/go-protobuf-builder:latest
         auth:
@@ -22,7 +15,7 @@ executors:
 
 jobs:
   build-function:
-    executor: python-builder
+    executor: go-protobuf-builder
     steps:
       - checkout
 
@@ -30,6 +23,7 @@ jobs:
           keys:
             - go-modules-v1-{{ checksum "go.sum" }}
             # See https://circleci.com/docs/2.0/caching/#restoring-cache
+            - go-modules-v1-
 
       - setup_remote_docker
 
@@ -45,13 +39,8 @@ jobs:
             make
             echo "pwd: $(pwd)"
             mkdir -v workspace
-
+            cp dist.zip workspace/dist.zip
             echo "${CIRCLE_BUILD_NUM}" > workspace/version
-
-            echo "hello pipeline"
-
-#            cp dist.zip workspace/dist.zip
-
 #            cp dist.zip ${SERVICE}-src-0.0.${CIRCLE_BUILD_NUM}.zip
 #            gsutil cp ${SERVICE}-src-0.0.${CIRCLE_BUILD_NUM}.zip gs://cytora-service-versions/${SERVICE}/
 
