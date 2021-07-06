@@ -1,0 +1,4 @@
+boto3==1.14.63
+fastapi
+psycopg2-binary==2.8.6
+mangum
