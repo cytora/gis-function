@@ -40,7 +40,7 @@ jobs:
             make lint
             make build-lambda
             echo "pwd: $(pwd)"
-            echo ls -la
+            ls -la
             mkdir -v workspace
             cp dist.zip workspace/dist.zip
             echo "${CIRCLE_BUILD_NUM}" > workspace/version
