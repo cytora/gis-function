@@ -1,3 +1,3 @@
-from api.main import app
-from api.config import Config
+from .main import app
+from .config import Config
 
