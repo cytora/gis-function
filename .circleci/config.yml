@@ -239,6 +239,7 @@ workflows:
             branches:
               only:
                 - master
+                - main
       - aws-publish:
           requires:
             - build-function
@@ -246,6 +247,7 @@ workflows:
             branches:
               only:
                 - master
+                - main
       - build-infra-dev:
           requires:
             - aws-publish
@@ -253,6 +255,7 @@ workflows:
             branches:
               only:
                 - master
+                - main
       - build-infra-prod:
           filters:
             tags:
