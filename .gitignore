@@ -2,7 +2,7 @@
 .DS_Store
 pakages
 flake8*.txt
-excl/
+excl
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
