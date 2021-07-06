@@ -1,4 +1,5 @@
 
+.DS_Store
 pakages
 flake8*.txt
 excl/
