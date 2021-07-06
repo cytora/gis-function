@@ -1,11 +1,11 @@
 version: 2.1
 
 orbs:
-  # The python orb contains a set of prepackaged CircleCI configuration you can use repeatedly in your configuration files
-  # Orb commands and jobs help you with common scripting around a language/tool
-  # so you dont have to copy and paste it everywhere.
-  # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/python
-  python: circleci/python@1.2
+  aws-assume: airswap/assume-role@0.2.0
+  aws-s3: circleci/aws-s3@1.0.13
+  # aws-ecr: circleci/aws-ecr@6.5.0
+  terraform: circleci/terraform@2.0.2
+
 
 workflows:
   sample:  # This is the name of the workflow, feel free to change it to better match your workflow.
