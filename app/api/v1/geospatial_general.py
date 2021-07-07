@@ -119,38 +119,41 @@ async def get_discovery():
             ordinal_position;
     '''
     start = time.perf_counter()
-    with PostgresConfiguration().pg2 as con:
-        res = select_query_dict(con, sql)
-
-    for el in res:
-        print(el)
+    try:
         with PostgresConfiguration().pg2 as con:
-            cur = con.cursor()
+            res = select_query_dict(con, sql)
 
-            srid = f'''SELECT Find_SRID('public', '{el['gis_layer']}', 'geom');'''
-            cur.execute(srid)
-            srd = cur.fetchall()
+        for el in res:
+            print(el)
+            with PostgresConfiguration().pg2 as con:
+                cur = con.cursor()
 
-            #count = f'''SELECT count(1) from {el['gis_layer']};'''
-            #cur.execute(count)
-            #cnt = cur.fetchall()
+                srid = f'''SELECT Find_SRID('public', '{el['gis_layer']}', 'geom');'''
+                cur.execute(srid)
+                srd = cur.fetchall()
 
-            geom_type = f'''SELECT count(1), ST_GeometryType(geom) as geom_type
-                from {el['gis_layer']}
-                group by ST_GeometryType(geom);'''
-            geom_typ = select_query_dict(con, geom_type)
+                #count = f'''SELECT count(1) from {el['gis_layer']};'''
+                #cur.execute(count)
+                #cnt = cur.fetchall()
 
-            ext_sql = f'''SELECT ST_AsGeoJSON(ST_Extent(geom)) as extent FROM {el['gis_layer']};'''
-            ext = select_query_dict(con, ext_sql)
+                geom_type = f'''SELECT count(1), ST_GeometryType(geom) as geom_type
+                    from {el['gis_layer']}
+                    group by ST_GeometryType(geom);'''
+                geom_typ = select_query_dict(con, geom_type)
 
-            el['srid'] = srd[0][0]
-            # el['count'] = cnt[0][0]
-            el['geometry'] = geom_typ[0]
-            d = ast.literal_eval(ext[0]['extent'])
-            el['extent'] = d
+                ext_sql = f'''SELECT ST_AsGeoJSON(ST_Extent(geom)) as extent FROM {el['gis_layer']};'''
+                ext = select_query_dict(con, ext_sql)
 
-    obj = {'layers': res, 'exec_time_seconds': f'{time.perf_counter() - start}'}
-    return obj
+                el['srid'] = srd[0][0]
+                # el['count'] = cnt[0][0]
+                el['geometry'] = geom_typ[0]
+                d = ast.literal_eval(ext[0]['extent'])
+                el['extent'] = d
+
+        obj = {'layers': res, 'exec_time_seconds': f'{time.perf_counter() - start}'}
+        return obj
+    except Exception as ex:
+        return {'error': str(ex), 'exec_time_seconds': f'{time.perf_counter() - start}'}
 
 
 @router.get('/intersect/')
@@ -187,22 +190,26 @@ async def get_intersection(latitude: float, longitude: float, layer: str):
     WHERE ST_Intersects(geom, 'SRID=4326;POINT({longitude} {latitude})');
     '''
     start = time.perf_counter()
-    with PostgresConfiguration().pg2 as con:
-        res = select_query_dict(con, sql)
+    try:
+        with PostgresConfiguration().pg2 as con:
+            res = select_query_dict(con, sql)
 
-    #geometry = None
-    for el in res:
-        #geometry = el['g']
-        del el['geom']
-        #del el['g']
+        #geometry = None
+        for el in res:
+            #geometry = el['g']
+            del el['geom']
+            #del el['g']
 
-    obj = {
-        'request': {
-            'lat': latitude,
-            'lon': longitude,
-            'layer': layer},
-        'response': res,
-        'exec_time_seconds': f'{time.perf_counter() - start}'
-    }
-    #obj['response'].append(ast.literal_eval(geometry))
-    return obj
+        obj = {
+            'request': {
+                'lat': latitude,
+                'lon': longitude,
+                'layer': layer},
+            'response': res,
+            'exec_time_seconds': f'{time.perf_counter() - start}'
+        }
+        #obj['response'].append(ast.literal_eval(geometry))
+        return obj
+    except Exception as ex:
+        return {'error': str(ex), 'exec_time_seconds': f'{time.perf_counter() - start}'}
+
