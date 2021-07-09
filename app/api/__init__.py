@@ -1,3 +1,2 @@
-from .main import app
+from .app import cytora_app
 from .config import Config
-
