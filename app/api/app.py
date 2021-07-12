@@ -2,7 +2,7 @@
 import time
 import psycopg2
 #from psycopg2 import Error
-#import ast
+import ast
 #import json
 import os
 
@@ -223,6 +223,51 @@ def get_intersection():# latitude: float, longitude: float, layer: str):
     except Exception as ex:
         t = time.perf_counter() - start
         return {'error': str(ex), 'exec_time_seconds': f'{t:.3f}'}
+
+
+@cytora_app.route(f"/{API_VERSION}/get-toid-info/<toid>", methods=['GET'])
+def get_toid_info(toid: str):
+
+    sql = f'''
+    SELECT
+    *
+    FROM entries_toid
+    WHERE toid = '{toid}';
+    '''
+    start = time.perf_counter()
+    try:
+        r = db.engine.execute(text(sql))
+        res = r.mappings().all()
+        res_arr = []
+        t = time.perf_counter() - start
+
+        for e in res:
+            el = dict(e)
+            r = {}
+            print(el)
+            for k in el.keys():
+                print(k, el[k])
+                if el[k]:
+                    r[k] = el[k]
+                    try:
+                        eval(el[k])
+                        r[k] = eval(el[k])
+                    except Exception as ex:
+                        print(ex)
+            res_arr.append(r)
+
+        obj = {
+            'request': {
+                'toid': toid,
+            },
+            'response': res_arr,
+            'exec_time_seconds': f'{t:.3f}',
+        }
+        return obj
+    except Exception as ex:
+        return {
+            'error': str(ex)
+        }
 
 
 if __name__ == '__main__':
