@@ -5,6 +5,7 @@ import psycopg2
 import ast
 #import json
 import os
+from collections import OrderedDict
 
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
@@ -38,6 +39,7 @@ cytora_app.config.from_mapping(
 db = SQLAlchemy(cytora_app)
 
 API_VERSION = 'v1'
+
 
 @cytora_app.route("/", methods=['GET'])
 def get_service():
@@ -267,6 +269,98 @@ def get_toid_info(toid: str):
     except Exception as ex:
         return {
             'error': str(ex)
+        }
+
+
+def stripper(data):
+    new_data = {}
+    for k, v in data.items():
+        if isinstance(v, dict):
+            v = stripper(v)
+        if not v in ('', None, {}):
+            new_data[k] = v
+    return new_data
+
+
+@cytora_app.route(f"/{API_VERSION}/get-uprn-info/<uprn>", methods=['GET'])
+def get_uprn_info(uprn: str):
+
+    sql = f'''
+    SELECT
+        u.uprn,
+        a.class_desc , 
+        a.concatenated ,
+        a.primary_desc , 
+        a.primary_code ,
+        a.secondary_desc ,
+        a.secondary_code ,
+        a.tertiary_desc,
+        a.tertiary_code ,
+        a.quaternary_desc,
+        a.quaternary_code
+    FROM uprn_property_classification u
+    LEFT JOIN apl_classification_code_mapping a
+    ON u.classification_code = a.concatenated 
+    WHERE uprn = '{uprn}';
+    '''
+    start = time.perf_counter()
+    try:
+        r = db.engine.execute(text(sql))
+        res = r.mappings().all()
+        res_arr = []
+        t = time.perf_counter() - start
+
+        for e in res:
+            el = dict(e)
+        res = el
+
+        property_classification = OrderedDict({
+            'uprn': str(res.get('uprn')),
+            'propertyClassification': {
+                'description': res.get('class_desc'),
+                'code': res.get('concatenated')
+            },
+            'primaryClassification': {
+                'description': res.get('primary_desc'),
+                'code': res.get('primary_code')
+            },
+            'secondaryClassification': {
+                'description': res.get('secondary_desc'),
+                'code': res.get('secondary_code')
+            },
+            'tertiaryClassification': {
+                'description': res.get('tertiary_desc'),
+                'code': res.get('tertiary_code')
+            },
+            'quaternaryClassification': {
+                'description': res.get('quaternary_desc'),
+                'code': res.get('quaternary_code')
+            }
+        })
+        property_classification = stripper(property_classification)
+
+        '''
+        for classtype in ['Secondary', 'Tertiary', 'Quaternary']:
+            code_key = '{}_Code'.format(classtype)
+            desc_key = '{}_Desc'.format(classtype)
+            if classification[code_key]:
+                data['{}Classification'.format(classtype.lower())] = {
+                    'description': classification[desc_key],
+                    'code': classification[code_key]
+                }
+        '''
+
+        obj = OrderedDict({
+            'request': {
+                'uprn': uprn,
+            },
+            'response': property_classification,
+            'exec_time_seconds': f'{t:.3f}',
+        })
+        return obj
+    except Exception as ex:
+        return {
+            'error': 'error_code'
         }
 
 
